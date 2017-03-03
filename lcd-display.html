@@ -1,0 +1,113 @@
+<html>
+<head>
+  <link rel="stylesheet" href="./css/lcdsegments.css">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="./js/lcdsegments.js"></script>
+</head>
+<body>
+<style>
+body {
+  /*background-image: url("cfiber.png");*/
+  background-color: steelblue;
+}
+.backlight {
+  display: inline-block;
+  /*position: relative;*/
+  /*background-color: #ffcc5c;*/
+  background-color: #A9BD77;
+  /*background-color: #E2F400;*/
+  border: 6px inset lightgrey;
+  border-radius: 12px;
+  /*height: 448px;*/
+  height: 128px;
+  width: auto;
+  overflow: hidden;
+  padding: 20px;
+  margin: auto;
+}
+.ampm {
+  display: inline-block;
+}
+
+</style>
+<script>
+
+    //var digitCount = 0;
+    var clockTime;
+    var timerToken;
+
+
+    function minuteTimer() {
+      clockTime.setTime(Date.now());
+      var nowHour = clockTime.getHours();
+      var nowMinute = clockTime.getMinutes();
+      if (nowMinute > 10) {
+        lcdDigits[0].displayValue(nowMinute % 10);
+        lcdDigits[1].displayValue(Math.floor(nowMinute / 10));
+      } else {
+        lcdDigits[0].displayValue(nowMinute);
+        lcdDigits[2].displayValue(0);
+      }
+      if (nowHour > 12) {
+        nowHour -= 12;
+        $(".ampm-am").css("color", "rgba(0,0,0,0.03)");
+        $(".ampm-pm").css("color", "rgb(0,0,0)");
+      } else {
+        $(".ampm-am").css("color", "rgb(0,0,0)");
+        $(".ampm-pm").css("color", "rgba(0,0,0,0.03)");
+      }
+      if (nowHour > 10) {
+        lcdDigits[2].displayValue(nowHour - 10);
+        lcdDigits[3].displayValue(Math.floor(nowHour / 10));
+      } else {
+        lcdDigits[2].displayValue(nowHour);
+        lcdDigits[3].blank();
+      }
+    }
+
+    var lcdDigits = [];
+    var lcdSymbols = [];
+
+    $( document ).ready(function() {
+      $(".lcd-digit").each(function() {
+        lcdDigits.unshift(new LCDDigit(this));
+      });
+      for (var i = 0; i < lcdDigits.length; i++) {
+        lcdDigits[i].scaleToContainer();
+        lcdDigits[i].oblique(true);
+      }
+      $(".lcd-symbol").each(function() {
+        lcdSymbols.unshift(new LCDSymbol(this));
+      });
+      for (var i = 0; i < lcdSymbols.length; i++) {
+        lcdSymbols[i].scaleToContainer();
+        lcdSymbols[i].display();
+      }
+      clockTime = new Date();
+      minuteTimer();
+      timerToken = setInterval(minuteTimer, 60000);
+    });
+  </script>
+<div class="backlight">
+  <div class="lcd-digit" id="digit3"></div>
+  <div class="lcd-digit" id="digit2"></div>
+  <div class="lcd-symbol colon-symbol">
+    <div class="colon-dot-top"></div>
+    <div class="colon-dot-bottom"></div>
+  </div>
+  <div class="lcd-digit" id="digit1"></div>
+  <div class="lcd-digit" id="digit0"></div>
+  <div class="lcd-symbol ampm-symbol">
+    <div class="ampm-am">AM</div>
+    <div class="ampm-pm">PM</div>
+  </div>
+</div>
+
+  <!--
+  <div class="lcd-symbol decimal-symbol">
+    <div class="decimal-dot"></div>
+  </div>
+-->
+</div>
+</body>
+</html>
